@@ -40,7 +40,7 @@ def login_request(request):
             login(request, user)
         else:
             context['message'] = "Invalid username or password."
-    return redirect(reverse('djangoapp:index') + '/?message=' + context['message'])
+    return redirect(reverse('djangoapp:index') + '?message=' + context['message'])
 
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):
