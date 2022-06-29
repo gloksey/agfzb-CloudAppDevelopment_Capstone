@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render, redirect, reverse
 # from .models import related models
 # from .restapis import related methods
 from django.contrib.auth import login, logout, authenticate
@@ -31,7 +31,7 @@ def contact(request):
 
 # Create a `login_request` view to handle sign in request
 def login_request(request):
-    context = {}
+    context = {'message': ''}
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['psw']
@@ -40,7 +40,7 @@ def login_request(request):
             login(request, user)
         else:
             context['message'] = "Invalid username or password."
-    return HttpResponseRedirect(reverse(viewname='djangoapp:index', kwargs=context))
+    return redirect(reverse('djangoapp:index') + '/?message=' + context['message'])
 
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):
@@ -51,7 +51,7 @@ def logout_request(request):
 def registration_request(request):
     context = {}
     if request.method == 'GET':
-        return render(request, 'djangoapp/user_registration_bootstrap.html', context)
+        return render(request, 'djangoapp/registration.html', context)
     elif request.method == 'POST':
         # Check if user exists
         username = request.POST['username']
@@ -71,12 +71,12 @@ def registration_request(request):
             return redirect("djangoapp:index")
         else:
             context['message'] = "User already exists."
-            return render(request, 'djangoapp/user_registration_bootstrap.html', context)
+            return render(request, 'djangoapp/registration.html', context)
 
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
-    context = {}
+    context = {'message': request.GET.get('message')}
     if request.method == "GET":
         return render(request, 'djangoapp/index.html', context)
 
