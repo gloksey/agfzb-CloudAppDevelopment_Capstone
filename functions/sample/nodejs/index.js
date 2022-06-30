@@ -12,23 +12,6 @@ const cloudant = CloudantV1.newInstance({
 });
 cloudant.setServiceUrl(process.env.COUCH_URL);
 
-function main(params) {
-  let dbListPromise = getDbs(cloudant);
-  return dbListPromise;
-}
-
-function getDbs(cloudant) {
-    return new Promise((resolve, reject) => {
-        cloudant.db.list()
-            .then(body => {
-                resolve({ dbs: body });
-            })
-            .catch(err => {
-                reject({ err: err });
-            });
-    });
-}
-
 app.get('/api/dealership', (req, res) => {
     let byState = req.query.state;
     if (byState !== undefined) {
