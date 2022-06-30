@@ -32,34 +32,3 @@ function getReviewByDealership(cloudant, dbname, dealerId) {
             });
     });
 }
-
-function getAllDealerships(cloudant, dbname) {
-    return new Promise((resolve, reject) => {
-        cloudant.postAllDocs({ db: dbname, includeDocs: true })
-            .then((result) => {
-                if (result.result.total_rows > 0) {
-                    let dealerships = [];
-                    result.result.rows.forEach(row => {
-                        dealerships.push({
-                            'id': row.doc.id,
-                            'city': row.doc.city,
-                            'state': row.doc.state,
-                            'st': row.doc.st,
-                            'address': row.doc.address,
-                            'zip': row.doc.zip,
-                            'lat': row.doc.lat,
-                            'long': row.doc.long
-                        });
-                    });
-                    resolve({result: dealerships});
-                }
-                else {
-                    throw new Error('404: The database is empty');
-                }
-            })
-            .catch(err => {
-                console.log(err);
-                reject({ err: err.message });
-            });
-    });
-}
