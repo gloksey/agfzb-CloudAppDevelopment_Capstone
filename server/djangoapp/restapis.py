@@ -1,6 +1,6 @@
 import requests
 import json
-from .models import CarDealer
+from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
 
 
@@ -36,11 +36,11 @@ def get_dealers_from_cf(url, **kwargs):
     json_result = get_request(url)
     if json_result:
         # Get the row list in JSON as dealers
-        dealers = json_result["rows"]
+        #dealers = json_result["rows"]
         # For each dealer object
-        for dealer in dealers:
+        for dealer_doc in json_result["result"]:
             # Get its content in `doc` object
-            dealer_doc = dealer["doc"]
+            #dealer_doc = dealer["doc"]
             # Create a CarDealer object with values in `doc` object
             dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"], full_name=dealer_doc["full_name"],
                                    id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
@@ -54,6 +54,29 @@ def get_dealers_from_cf(url, **kwargs):
 # def get_dealer_by_id_from_cf(url, dealerId):
 # - Call get_request() with specified arguments
 # - Parse JSON results into a DealerView object list
+def get_dealer_reviews_from_cf(url, **kwargs):
+    results = []
+    # Call get_request with a URL parameter
+    json_result = get_request(url)
+    if json_result:
+        # Get the row list in JSON as dealers
+        #dealers = json_result["rows"]
+        # For each dealer object
+        for review_doc in json_result["result"]:
+            dealer_obj = DealerReview(
+                dealership = review_doc["dealership"],
+                name = review_doc["name"],
+                purchase = review_doc["purchase"],
+                purchase_date = review_doc["purchase_date"],
+                review = review_doc["review"],
+                car_make = review_doc["car_make"],
+                car_model = review_doc["car_model"],
+                car_year = review_doc["car_year"],
+                id = review_doc["id"]
+            )
+            results.append(dealer_obj)
+
+    return results
 
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
