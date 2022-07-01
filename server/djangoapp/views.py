@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect, reverse
-# from .models import related models
+from .models import CarMake, CarModel
 from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -120,5 +120,7 @@ def add_review(request, dealer_id):
         context = {}
         dealers = get_dealers_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/dealership?dealerId=" + str(dealer_id))
         context['dealer'] = dealers.pop()
+        cars = CarModel.objects.all()
+        context['cars'] = cars
         response = render(request, 'djangoapp/add_review.html', context)
     return response
