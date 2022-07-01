@@ -3,9 +3,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect, reverse
 # from .models import related models
-from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 import logging
 import json
@@ -93,6 +94,23 @@ def get_dealer_details(request, dealer_id):
         return HttpResponse(reviews)
 
 # Create a `add_review` view to submit a review
+#@csrf_exempt
 def add_review(request, dealer_id):
-    pass
-
+    response = HttpResponse()
+    print(request.user)
+    if request.method == "POST" and request.user.is_authenticated:
+        print('we are here')
+        review = dict()
+        review['time'] = datetime.utcnow().isoformat()
+        review['dealership'] = dealer_id
+        review['name'] = request.user.first_name + ' ' + request.user.last_name
+        review['review'] = request.POST['review']
+        review['purchase'] = bool(request.POST['purchase'])
+        review['purchase_date'] = request.POST.get('purchase_date')
+        json_payload = dict()
+        json_payload['review'] = review
+        response_data = post_request("https://5e273dc5.us-south.apigw.appdomain.cloud/api/review", json_payload)
+        response.write(response_data)
+    else:
+        response.write('fsdfsfsfsfsdf')
+    return response

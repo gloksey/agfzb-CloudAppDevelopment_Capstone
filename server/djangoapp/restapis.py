@@ -31,7 +31,17 @@ def get_request(url, api_key=None, **kwargs):
 
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
-
+def post_request(url, json_payload, **kwargs):
+    print(kwargs)
+    print("POST to {} ".format(url))
+    try:
+        response = requests.post(url, params=kwargs, json=json_payload)
+    except:
+        print("Network exception occurred")
+    status_code = response.status_code
+    print("With status {} ".format(status_code))
+    json_data = json.loads(response.text)
+    return json_data
 
 # Create a get_dealers_from_cf method to get dealers from a cloud function
 # def get_dealers_from_cf(url, **kwargs):
@@ -81,7 +91,10 @@ def get_dealer_reviews_from_cf(url, **kwargs):
                 car_year = review_doc["car_year"],
                 id = review_doc["id"]
             )
-            analyze_review_sentiments(review_doc['review'])
+            sentiment_json = analyze_review_sentiments(review_doc['review'])
+            if (sentiment_json.get('error') is None):
+                dealer_obj.sentiment = sentiment_json['sentiment']['document']['label']
+            print(dealer_obj)
             results.append(dealer_obj)
 
     return results
@@ -97,4 +110,4 @@ def analyze_review_sentiments(dealerreview):
     params['version'] = '2022-04-07'
     params['features'] = 'sentiment'
     json_result = get_request(nlu_url, nlu_api_key, text=dealerreview, version='2022-04-07', features='sentiment', return_analyzed_text='true')
-    print(json_result)
+    return json_result
