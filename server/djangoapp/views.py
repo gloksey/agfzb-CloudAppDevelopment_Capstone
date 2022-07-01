@@ -90,8 +90,8 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
     context = {}
     if request.method == "GET":
-        dealerships = get_dealers_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/dealership?dealerId=" + str(dealer_id))
-        context['dealership'] = dealerships.pop()
+        dealers = get_dealers_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/dealership?dealerId=" + str(dealer_id))
+        context['dealer'] = dealers.pop()
         reviews = get_dealer_reviews_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/review?dealerId=" + str(dealer_id))
         context['reviews'] = reviews
 #        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
@@ -115,7 +115,10 @@ def add_review(request, dealer_id):
         json_payload = dict()
         json_payload['review'] = review
         response_data = post_request("https://5e273dc5.us-south.apigw.appdomain.cloud/api/review", json_payload)
-        response.write(response_data)
+        response = HttpResponse(response_data)
     else:
-        response.write('fsdfsfsfsfsdf')
+        context = {}
+        dealers = get_dealers_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/dealership?dealerId=" + str(dealer_id))
+        context['dealer'] = dealers.pop()
+        response = render(request, 'djangoapp/add_review.html', context)
     return response
