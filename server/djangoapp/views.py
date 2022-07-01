@@ -80,18 +80,23 @@ def get_dealerships(request):
     context = {'message': request.GET.get('message')}
     if request.method == "GET":
         dealerships = get_dealers_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/dealership")
-        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
-        # return render(request, 'djangoapp/index.html', context)
-        return HttpResponse(dealer_names)
+        context['dealerships'] = dealerships
+#        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        return render(request, 'djangoapp/index.html', context)
+#        return HttpResponse(dealer_names)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 def get_dealer_details(request, dealer_id):
+    context = {}
     if request.method == "GET":
+        dealership = get_dealers_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/dealership?dealerId=" + str(dealer_id))
+        context['dealership'] = dealership
         reviews = get_dealer_reviews_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/review?dealerId=" + str(dealer_id))
+        context['reviews'] = reviews
 #        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
-        # return render(request, 'djangoapp/index.html', context)
-        return HttpResponse(reviews)
+        return render(request, 'djangoapp/dealer_details.html', context)
+        #return HttpResponse(reviews)
 
 # Create a `add_review` view to submit a review
 #@csrf_exempt

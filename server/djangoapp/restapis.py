@@ -50,7 +50,7 @@ def post_request(url, json_payload, **kwargs):
 def get_dealers_from_cf(url, **kwargs):
     results = []
     # Call get_request with a URL parameter
-    json_result = get_request(url)
+    json_result = get_request(url, kwargs)
     if json_result:
         # Get the row list in JSON as dealers
         #dealers = json_result["rows"]
@@ -75,26 +75,25 @@ def get_dealer_reviews_from_cf(url, **kwargs):
     results = []
     # Call get_request with a URL parameter
     json_result = get_request(url)
-    if json_result:
+    if json_result and json_result.get('result'):
         # Get the row list in JSON as dealers
         #dealers = json_result["rows"]
         # For each dealer object
         for review_doc in json_result["result"]:
             dealer_obj = DealerReview(
-                dealership = review_doc["dealership"],
-                name = review_doc["name"],
-                purchase = review_doc["purchase"],
-                purchase_date = review_doc["purchase_date"],
-                review = review_doc["review"],
-                car_make = review_doc["car_make"],
-                car_model = review_doc["car_model"],
-                car_year = review_doc["car_year"],
-                id = review_doc["id"]
+                dealership = review_doc.get("dealership"),
+                name = review_doc.get("name"),
+                review = review_doc.get("review"),
+                purchase = review_doc.get("purchase"),
+                purchase_date = review_doc.get("purchase_date"),
+                car_make = review_doc.get("car_make"),
+                car_model = review_doc.get("car_model"),
+                car_year = review_doc.get("car_year"),
+                id = review_doc.get("id")
             )
             sentiment_json = analyze_review_sentiments(review_doc['review'])
             if (sentiment_json.get('error') is None):
                 dealer_obj.sentiment = sentiment_json['sentiment']['document']['label']
-            print(dealer_obj)
             results.append(dealer_obj)
 
     return results
