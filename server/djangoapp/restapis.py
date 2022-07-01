@@ -1,19 +1,26 @@
+import os
 import requests
 import json
 from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
+from dotenv import load_dotenv
 
+load_dotenv()
+nlu_api_key = os.environ["NLU_API_KEY"]
+nlu_url = os.environ["NLU_URL"]
 
 # Create a `get_request` to make HTTP GET requests
 # e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
 #                                     auth=HTTPBasicAuth('apikey', api_key))
-def get_request(url, **kwargs):
+def get_request(url, api_key=None, **kwargs):
     print(kwargs)
     print("GET from {} ".format(url))
     try:
         # Call get method of requests library with URL and parameters
-        response = requests.get(url, headers={'Content-Type': 'application/json'},
-                                    params=kwargs)
+        if api_key:
+            response = requests.get(url, headers={'Content-Type': 'application/json'}, params=kwargs, auth=HTTPBasicAuth('apikey', api_key))
+        else:
+            response = requests.get(url, headers={'Content-Type': 'application/json'}, params=kwargs)
     except:
         # If any error occurs
         print("Network exception occurred")
@@ -74,6 +81,7 @@ def get_dealer_reviews_from_cf(url, **kwargs):
                 car_year = review_doc["car_year"],
                 id = review_doc["id"]
             )
+            analyze_review_sentiments(review_doc['review'])
             results.append(dealer_obj)
 
     return results
@@ -83,6 +91,10 @@ def get_dealer_reviews_from_cf(url, **kwargs):
 # def analyze_review_sentiments(text):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
-
-
-
+def analyze_review_sentiments(dealerreview):
+    params = dict()
+    params['text'] = dealerreview
+    params['version'] = '2022-04-07'
+    params['features'] = 'sentiment'
+    json_result = get_request(nlu_url, nlu_api_key, text=dealerreview, version='2022-04-07', features='sentiment', return_analyzed_text='true')
+    print(json_result)

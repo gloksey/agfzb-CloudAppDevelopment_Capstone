@@ -85,5 +85,5 @@ class DealerReview:
 #        self.sentiment = sentiment
         self.id = id
 
-    def __str__(self):
-        return "Dealer name: " + self.name
+#    def __str__(self):
+#        return "Dealer name: " + self.name
