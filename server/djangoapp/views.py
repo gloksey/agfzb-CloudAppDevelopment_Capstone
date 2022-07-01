@@ -90,8 +90,8 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
     context = {}
     if request.method == "GET":
-        dealership = get_dealers_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/dealership?dealerId=" + str(dealer_id))
-        context['dealership'] = dealership
+        dealerships = get_dealers_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/dealership?dealerId=" + str(dealer_id))
+        context['dealership'] = dealerships.pop()
         reviews = get_dealer_reviews_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/review?dealerId=" + str(dealer_id))
         context['reviews'] = reviews
 #        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
