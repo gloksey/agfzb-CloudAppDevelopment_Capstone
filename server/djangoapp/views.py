@@ -107,13 +107,14 @@ def add_review(request, dealer_id):
         review['time'] = datetime.utcnow().isoformat()
         review['dealership'] = dealer_id
         review['name'] = request.user.first_name + ' ' + request.user.last_name
-        review['review'] = request.POST['review']
-        review['purchase'] = bool(request.POST['purchase'])
-        review['purchase_date'] = request.POST.get('purchase_date')
-        car = CarModel.objects.get(id=request.POST['car'])
-        review['car_make'] = car.car_make.name
-        review['car_model'] = car.name
-        review['car_year'] = car.car_year.strftime("%Y")
+        review['review'] = request.POST.get('review')
+        review['purchase'] = bool(request.POST.get('purchase'))
+        if review['purchase']:
+            review['purchase_date'] = request.POST.get('purchase_date')
+            car = CarModel.objects.get(id=request.POST.get('car'))
+            review['car_make'] = car.car_make.name
+            review['car_model'] = car.name
+            review['car_year'] = car.car_year.strftime("%Y")
         json_payload = dict()
         json_payload['review'] = review
         response_data = post_request("https://5e273dc5.us-south.apigw.appdomain.cloud/api/review", json_payload)
