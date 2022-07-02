@@ -27,7 +27,7 @@ DEBUG = True
 
 APPEND_SLASH = True
 
-ALLOWED_HOSTS = ["localhost", "agl-djapp.eu-gb.cf.appdomain.cloud"]
+ALLOWED_HOSTS = ["localhost", "agl-djapp.eu-gb.cf.appdomain.cloud", "https://alekseyg-8000.theiadocker-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/"]
 
 
 # Application definition
