@@ -12,7 +12,7 @@
     <!--Add a nav bar here -->
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
             <div class="container-fluid">
-                <div class="navbar-brand">Best Cars</div>
+                <div class="navbar-brand"><a href="{% url 'djangoapp:index' %}" class="navbar-brand">Best Cars</a></div>
                 <ul class="navbar-nav navbar-left">
                     <li class="nav-item">
                     <a class="nav-link" href="{% url 'djangoapp:about_us' %}">About Us</a>
@@ -48,14 +48,14 @@
         </nav>
 
         <!-- Add reviews as cards -->
-        <div class="container-fluid pt-3">
+        <div class="container pt-3">
             <h2>Reviews for <strong>{{dealer.full_name}}</strong></h2>
             {% if user.is_authenticated %}
                 <h4><a href="{% url 'djangoapp:add_review' dealer.id %}">Add review</a></h4>
             {% endif %}
             <div class="card-columns">
                 {% for review in reviews %}
-                    <div class="card" style="width: 400px">
+                    <div class="card" style="width: 350px; height: 300px">
                         <div class="card-header">
                             {% if review.sentiment %}
                                 <img class="card-img-left" src="{{MEDIA_URL}}/emoji/{{review.sentiment}}.png" width="50"/>
