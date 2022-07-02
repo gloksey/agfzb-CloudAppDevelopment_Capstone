@@ -102,9 +102,7 @@ def get_dealer_details(request, dealer_id):
 #@csrf_exempt
 def add_review(request, dealer_id):
     response = HttpResponse()
-    print(request.user)
     if request.method == "POST" and request.user.is_authenticated:
-        print('we are here')
         review = dict()
         review['time'] = datetime.utcnow().isoformat()
         review['dealership'] = dealer_id
@@ -112,10 +110,14 @@ def add_review(request, dealer_id):
         review['review'] = request.POST['review']
         review['purchase'] = bool(request.POST['purchase'])
         review['purchase_date'] = request.POST.get('purchase_date')
+        car = CarModel.objects.get(id=request.POST['car'])
+        review['car_make'] = car.car_make.name
+        review['car_model'] = car.name
+        review['car_year'] = car.car_year.strftime("%Y")
         json_payload = dict()
         json_payload['review'] = review
         response_data = post_request("https://5e273dc5.us-south.apigw.appdomain.cloud/api/review", json_payload)
-        response = HttpResponse(response_data)
+        response = redirect("djangoapp:dealer_details", dealer_id=dealer_id)
     else:
         context = {}
         dealers = get_dealers_from_cf("https://5e273dc5.us-south.apigw.appdomain.cloud/api/dealership?dealerId=" + str(dealer_id))
